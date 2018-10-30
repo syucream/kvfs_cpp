@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named KVFS
+# Target rules for targets named kvfs
 
 # Build rule for target.
-KVFS: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 KVFS
-.PHONY : KVFS
+kvfs: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 kvfs
+.PHONY : kvfs
 
 # fast build rule for target.
-KVFS/fast:
-	$(MAKE) -f CMakeFiles/KVFS.dir/build.make CMakeFiles/KVFS.dir/build
-.PHONY : KVFS/fast
+kvfs/fast:
+	$(MAKE) -f CMakeFiles/kvfs.dir/build.make CMakeFiles/kvfs.dir/build
+.PHONY : kvfs/fast
 
 src/fuse/kvfs.o: src/fuse/kvfs.cpp.o
 
@@ -129,7 +129,7 @@ src/fuse/kvfs.o: src/fuse/kvfs.cpp.o
 
 # target to build an object file
 src/fuse/kvfs.cpp.o:
-	$(MAKE) -f CMakeFiles/KVFS.dir/build.make CMakeFiles/KVFS.dir/src/fuse/kvfs.cpp.o
+	$(MAKE) -f CMakeFiles/kvfs.dir/build.make CMakeFiles/kvfs.dir/src/fuse/kvfs.cpp.o
 .PHONY : src/fuse/kvfs.cpp.o
 
 src/fuse/kvfs.i: src/fuse/kvfs.cpp.i
@@ -138,7 +138,7 @@ src/fuse/kvfs.i: src/fuse/kvfs.cpp.i
 
 # target to preprocess a source file
 src/fuse/kvfs.cpp.i:
-	$(MAKE) -f CMakeFiles/KVFS.dir/build.make CMakeFiles/KVFS.dir/src/fuse/kvfs.cpp.i
+	$(MAKE) -f CMakeFiles/kvfs.dir/build.make CMakeFiles/kvfs.dir/src/fuse/kvfs.cpp.i
 .PHONY : src/fuse/kvfs.cpp.i
 
 src/fuse/kvfs.s: src/fuse/kvfs.cpp.s
@@ -147,7 +147,7 @@ src/fuse/kvfs.s: src/fuse/kvfs.cpp.s
 
 # target to generate assembly for a file
 src/fuse/kvfs.cpp.s:
-	$(MAKE) -f CMakeFiles/KVFS.dir/build.make CMakeFiles/KVFS.dir/src/fuse/kvfs.cpp.s
+	$(MAKE) -f CMakeFiles/kvfs.dir/build.make CMakeFiles/kvfs.dir/src/fuse/kvfs.cpp.s
 .PHONY : src/fuse/kvfs.cpp.s
 
 # Help Target
@@ -158,7 +158,7 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... KVFS"
+	@echo "... kvfs"
 	@echo "... src/fuse/kvfs.o"
 	@echo "... src/fuse/kvfs.i"
 	@echo "... src/fuse/kvfs.s"

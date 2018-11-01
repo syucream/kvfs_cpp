@@ -13,6 +13,14 @@ constexpr auto stat_size = sizeof(struct stat);
 // TODO ensure thread safety, and define an interface
 LevelDBDriver *driver;
 
+static struct kvfs_option {
+    const char *path;
+} options;
+
+static const struct fuse_opt kvfs_option_spec[] = {
+        {"--path=%s", offsetof(struct kvfs_option, path), 1}
+};
+
 static void *kvfs_init(struct fuse_conn_info *conn) {
     // TODO pass the path to db.
     driver = new LevelDBDriver("");
@@ -69,6 +77,11 @@ const static struct fuse_operations kvfs_operation = {
 
 int main(int argc, char **argv) {
     struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
+
+    options.path = "";
+    if (fuse_opt_parse(&args, &options, kvfs_option_spec, nullptr) == -1) {
+        return 1;
+    }
 
     const auto ret = fuse_main(args.argc, args.argv, &kvfs_operation, nullptr);
     fuse_opt_free_args(&args);

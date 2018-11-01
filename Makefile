@@ -123,6 +123,33 @@ kvfs/fast:
 	$(MAKE) -f CMakeFiles/kvfs.dir/build.make CMakeFiles/kvfs.dir/build
 .PHONY : kvfs/fast
 
+src/drivers/leveldb.o: src/drivers/leveldb.cpp.o
+
+.PHONY : src/drivers/leveldb.o
+
+# target to build an object file
+src/drivers/leveldb.cpp.o:
+	$(MAKE) -f CMakeFiles/kvfs.dir/build.make CMakeFiles/kvfs.dir/src/drivers/leveldb.cpp.o
+.PHONY : src/drivers/leveldb.cpp.o
+
+src/drivers/leveldb.i: src/drivers/leveldb.cpp.i
+
+.PHONY : src/drivers/leveldb.i
+
+# target to preprocess a source file
+src/drivers/leveldb.cpp.i:
+	$(MAKE) -f CMakeFiles/kvfs.dir/build.make CMakeFiles/kvfs.dir/src/drivers/leveldb.cpp.i
+.PHONY : src/drivers/leveldb.cpp.i
+
+src/drivers/leveldb.s: src/drivers/leveldb.cpp.s
+
+.PHONY : src/drivers/leveldb.s
+
+# target to generate assembly for a file
+src/drivers/leveldb.cpp.s:
+	$(MAKE) -f CMakeFiles/kvfs.dir/build.make CMakeFiles/kvfs.dir/src/drivers/leveldb.cpp.s
+.PHONY : src/drivers/leveldb.cpp.s
+
 src/fuse/kvfs.o: src/fuse/kvfs.cpp.o
 
 .PHONY : src/fuse/kvfs.o
@@ -159,6 +186,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... kvfs"
+	@echo "... src/drivers/leveldb.o"
+	@echo "... src/drivers/leveldb.i"
+	@echo "... src/drivers/leveldb.s"
 	@echo "... src/fuse/kvfs.o"
 	@echo "... src/fuse/kvfs.i"
 	@echo "... src/fuse/kvfs.s"

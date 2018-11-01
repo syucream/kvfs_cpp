@@ -4,9 +4,14 @@
 
 #include <fuse.h>
 
+#include "../drivers/leveldb.h"
+
 using std::string;
 
 constexpr auto stat_size = sizeof(struct stat);
+
+// TODO ensure thread safety, and define an interface
+LevelDBDriver *driver;
 
 static int kvfs_getattr(const char *path,
                         struct stat *stbuf) {
@@ -34,7 +39,7 @@ static int kvfs_readdir(const char *path,
 static int kvfs_open(const char *path,
                      struct fuse_file_info *fi) {
 
-    // TODO
+    driver = new LevelDBDriver(string(path));
 
     return 0;
 }

@@ -13,6 +13,13 @@ constexpr auto stat_size = sizeof(struct stat);
 // TODO ensure thread safety, and define an interface
 LevelDBDriver *driver;
 
+static void *kvfs_init(struct fuse_conn_info *conn) {
+    // TODO pass the path to db.
+    driver = new LevelDBDriver("");
+
+    return nullptr;
+}
+
 static int kvfs_getattr(const char *path,
                         struct stat *stbuf) {
 
@@ -39,8 +46,6 @@ static int kvfs_readdir(const char *path,
 static int kvfs_open(const char *path,
                      struct fuse_file_info *fi) {
 
-    driver = new LevelDBDriver(string(path));
-
     return 0;
 }
 
@@ -55,10 +60,11 @@ static int kvfs_read(const char *path,
 }
 
 const static struct fuse_operations kvfs_operation = {
+        .init    = kvfs_init,
         .getattr = kvfs_getattr,
         .readdir = kvfs_readdir,
-        .open = kvfs_open,
-        .read = kvfs_read,
+        .open    = kvfs_open,
+        .read    = kvfs_read,
 };
 
 int main(int argc, char **argv) {

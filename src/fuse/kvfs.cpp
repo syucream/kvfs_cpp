@@ -11,7 +11,7 @@ using std::string;
 constexpr auto stat_size = sizeof(struct stat);
 
 // TODO ensure thread safety, and define an interface
-LevelDBDriver *driver;
+LevelDBDriver *driver = nullptr;
 
 static struct kvfs_option {
     const char *path;
@@ -62,9 +62,18 @@ static int kvfs_read(const char *path,
                      size_t size,
                      off_t offset,
                      struct fuse_file_info *fi) {
-    // TODO
+    if (!driver || !buf) {
+        return -ENOENT;
+    }
 
-    return 0;
+    const auto c = driver->read(string(path));
+    if (c.size < size) {
+        return -ENOENT;
+    }
+
+    std::memcpy(buf, c.data, c.size);
+
+    return c.size;
 }
 
 const static struct fuse_operations kvfs_operation = {

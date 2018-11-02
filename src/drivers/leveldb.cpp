@@ -10,3 +10,11 @@ LevelDBDriver::LevelDBDriver(const string path) {
     this->_db = std::make_shared<leveldb::DB*>(db);
 }
 
+Content LevelDBDriver::read(const string key) {
+    string value;
+
+    // TODO
+    // this->_db->Get(leveldb::ReadOptions(), leveldb::Slice(key), &value);
+
+    return Content(value.data(), value.size());
+}

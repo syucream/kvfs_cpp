@@ -18,6 +18,7 @@ struct Content {
     size_t size;
 };
 
+// TODO Separate basic decleartions to an interface.
 class LevelDBDriver {
 public:
     LevelDBDriver(const std::string path);

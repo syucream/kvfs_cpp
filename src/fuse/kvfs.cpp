@@ -34,9 +34,26 @@ static int kvfs_getattr(const char *path,
 
     memset(stbuf, 0, stat_size);
 
-    // TODO
+    if (path_str.back() == '/') {
+        // dir
 
-    return -ENOENT;
+        const auto keys = driver->keys(path_str);
+        stbuf->st_mode = S_IFDIR | 0755;
+        stbuf->st_nlink = keys.size() + 1;
+    } else {
+        // file
+
+        const auto v = driver->read(string(path));
+        if (!v) {
+            return -ENOENT;
+        }
+
+        stbuf->st_mode = S_IFREG | 0755;
+        stbuf->st_nlink = 1;
+        stbuf->st_size = v->size;
+    }
+
+    return 0;
 }
 
 static int kvfs_readdir(const char *path,
@@ -44,12 +61,19 @@ static int kvfs_readdir(const char *path,
                         fuse_fill_dir_t filler,
                         off_t offset,
                         struct fuse_file_info *fi) {
+    const auto path_str = string(path);
+
+    // It's a dir or not.
+    if (path_str.back() != '/') {
+        return -ENOENT;
+    }
+
     // default dirs
     filler(buf, ".", nullptr, 0);
     filler(buf, "..", nullptr, 0);
 
     // keys
-    const auto keys = driver->keys(string(path));
+    const auto keys = driver->keys(path_str);
     for (const auto k : keys) {
         filler(buf, k.data(), nullptr, 0);
     }
@@ -104,7 +128,6 @@ int main(int argc, char **argv) {
 
     const auto ret = fuse_main(args.argc, args.argv, &kvfs_operation, nullptr);
 
-    // TODO pass the path to db.
     driver = new LevelDBDriver(string(options.path));
 
     fuse_opt_free_args(&args);

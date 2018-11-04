@@ -22,8 +22,7 @@ static const struct fuse_opt kvfs_option_spec[] = {
 };
 
 static void *kvfs_init(struct fuse_conn_info *conn) {
-    // TODO pass the path to db.
-    driver = new LevelDBDriver("");
+    // TODO
 
     return nullptr;
 }
@@ -96,6 +95,10 @@ int main(int argc, char **argv) {
     }
 
     const auto ret = fuse_main(args.argc, args.argv, &kvfs_operation, nullptr);
+
+    // TODO pass the path to db.
+    driver = new LevelDBDriver(string(options.path));
+
     fuse_opt_free_args(&args);
 
     return ret;

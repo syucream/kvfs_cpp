@@ -44,7 +44,15 @@ static int kvfs_readdir(const char *path,
                         fuse_fill_dir_t filler,
                         off_t offset,
                         struct fuse_file_info *fi) {
-    // TODO
+    // default dirs
+    filler(buf, ".", nullptr, 0);
+    filler(buf, "..", nullptr, 0);
+
+    // keys
+    const auto keys = driver->keys(string(path));
+    for (const auto k : keys) {
+        filler(buf, k.data(), nullptr, 0);
+    }
 
     return 0;
 }

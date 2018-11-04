@@ -26,6 +26,8 @@ public:
 
     bool exist(const std::string key);
 
+    std::vector<std::string> keys(const std::string partial_key);
+
 private:
     std::shared_ptr<leveldb::DB *> _db;
     leveldb::Options _options;

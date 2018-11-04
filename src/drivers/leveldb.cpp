@@ -1,6 +1,7 @@
 #include "leveldb.h"
 
 using std::string;
+using std::vector;
 using std::experimental::optional;
 
 LevelDBDriver::LevelDBDriver(const string path) {
@@ -24,4 +25,19 @@ optional<Content> LevelDBDriver::read(const string key) {
 
 bool LevelDBDriver::exist(const std::string key) {
     return this->read(key) != std::experimental::nullopt;
+}
+
+vector<string> LevelDBDriver::keys(const std::string partial_key) {
+    vector<string> keys;
+
+    auto it = (*this->_db)->NewIterator(leveldb::ReadOptions());
+    for (it->SeekToFirst(); it->Valid(); it->Next()) {
+        const auto s = it->key();
+        const auto k = string(s.data(), s.size());
+        if (k.find(partial_key) == 0) {
+            keys.push_back(k);
+        }
+    }
+
+    return keys;
 }

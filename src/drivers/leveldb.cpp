@@ -1,6 +1,7 @@
 #include "leveldb.h"
 
 using std::string;
+using std::experimental::optional;
 
 LevelDBDriver::LevelDBDriver(const string path) {
     leveldb::DB *db = nullptr;
@@ -10,9 +11,16 @@ LevelDBDriver::LevelDBDriver(const string path) {
     this->_db = std::make_shared<leveldb::DB*>(db);
 }
 
-Content LevelDBDriver::read(const string key) {
+optional<Content> LevelDBDriver::read(const string key) {
     string value;
-    (*this->_db)->Get(leveldb::ReadOptions(), leveldb::Slice(key), &value);
 
-    return Content(value.data(), value.size());
+    const auto status = (*this->_db)->Get(leveldb::ReadOptions(), leveldb::Slice(key), &value);
+    if (status.IsNotFound()) {
+        return std::experimental::nullopt;
+    }
+
+    return std::experimental::make_optional(Content(value.data(), value.size()));
+}
+
+bool LevelDBDriver::exist(const std::string key) {
 }

@@ -2,6 +2,7 @@
 #define KVFS_LEVELDB_H
 
 #include <memory>
+#include <experimental/optional>
 #include <string>
 #include <vector>
 
@@ -21,7 +22,9 @@ class LevelDBDriver {
 public:
     LevelDBDriver(const std::string path);
 
-    Content read(const std::string key);
+    std::experimental::optional<Content> read(const std::string key);
+
+    bool exist(const std::string key);
 
 private:
     std::shared_ptr<leveldb::DB *> _db;

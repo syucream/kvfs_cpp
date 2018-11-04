@@ -66,14 +66,14 @@ static int kvfs_read(const char *path,
         return -ENOENT;
     }
 
-    const auto c = driver->read(string(path));
-    if (c.size < size) {
+    const auto v = driver->read(string(path));
+    if (!v || v->size < size) {
         return -ENOENT;
     }
 
-    std::memcpy(buf, c.data, c.size);
+    std::memcpy(buf, v->data, v->size);
 
-    return c.size;
+    return v->size;
 }
 
 const static struct fuse_operations kvfs_operation = {

@@ -23,4 +23,5 @@ optional<Content> LevelDBDriver::read(const string key) {
 }
 
 bool LevelDBDriver::exist(const std::string key) {
+    return this->read(key) != std::experimental::nullopt;
 }

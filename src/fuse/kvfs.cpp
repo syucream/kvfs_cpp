@@ -45,7 +45,6 @@ static int kvfs_readdir(const char *path,
                         fuse_fill_dir_t filler,
                         off_t offset,
                         struct fuse_file_info *fi) {
-
     // TODO
 
     return 0;
@@ -53,6 +52,10 @@ static int kvfs_readdir(const char *path,
 
 static int kvfs_open(const char *path,
                      struct fuse_file_info *fi) {
+
+    if (!driver->exist(string(path))) {
+        return -ENOENT;
+    }
 
     return 0;
 }

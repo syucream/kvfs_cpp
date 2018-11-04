@@ -12,9 +12,7 @@ LevelDBDriver::LevelDBDriver(const string path) {
 
 Content LevelDBDriver::read(const string key) {
     string value;
-
-    // TODO
-    // this->_db->Get(leveldb::ReadOptions(), leveldb::Slice(key), &value);
+    (*this->_db)->Get(leveldb::ReadOptions(), leveldb::Slice(key), &value);
 
     return Content(value.data(), value.size());
 }

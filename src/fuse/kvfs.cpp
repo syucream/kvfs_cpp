@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 #include <cerrno>
 #include <cstring>
@@ -48,7 +49,7 @@ static int kvfs_getattr(const char *path,
             return -ENOENT;
         }
 
-        stbuf->st_mode = S_IFREG | 0755;
+        stbuf->st_mode = S_IFREG | 0444;
         stbuf->st_nlink = 1;
         stbuf->st_size = v->size;
     }
@@ -125,6 +126,7 @@ int main(int argc, char **argv) {
     if (fuse_opt_parse(&args, &options, kvfs_option_spec, nullptr) == -1) {
         return 1;
     }
+    std::cout << "path: " << options.path <<  std::endl;
 
     const auto ret = fuse_main(args.argc, args.argv, &kvfs_operation, nullptr);
 

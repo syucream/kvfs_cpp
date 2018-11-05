@@ -32,7 +32,6 @@ public:
 private:
     std::shared_ptr<leveldb::DB *> _db;
     leveldb::Options _options;
-    leveldb::Status _status;
 };
 
 #endif //KVFS_LEVELDB_H

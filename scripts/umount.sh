@@ -1,0 +1,1 @@
+diskutil umount $1

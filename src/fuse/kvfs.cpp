@@ -84,7 +84,6 @@ static int kvfs_readdir(const char *path,
 
 static int kvfs_open(const char *path,
                      struct fuse_file_info *fi) {
-
     if (!driver->exist(string(path))) {
         return -ENOENT;
     }
@@ -111,12 +110,30 @@ static int kvfs_read(const char *path,
     return v->size;
 }
 
+static int kvfs_write(const char *path,
+                      const char *buf,
+                      size_t size,
+                      off_t offset,
+                      struct fuse_file_info *fi) {
+    if (!driver || !buf) {
+        return -ENOENT;
+    }
+
+    const auto wsize = driver->write(string(path), Content(buf, size));
+    if (!size) {
+        return -ENOENT;
+    }
+
+    return *wsize;
+}
+
 const static struct fuse_operations kvfs_operation = {
         .init    = kvfs_init,
         .getattr = kvfs_getattr,
         .readdir = kvfs_readdir,
         .open    = kvfs_open,
         .read    = kvfs_read,
+        .write   = kvfs_write,
 };
 
 int main(int argc, char **argv) {
@@ -126,7 +143,7 @@ int main(int argc, char **argv) {
     if (fuse_opt_parse(&args, &options, kvfs_option_spec, nullptr) == -1) {
         return 1;
     }
-    std::cout << "path: " << options.path <<  std::endl;
+    std::cout << "path: " << options.path << std::endl;
 
     const auto ret = fuse_main(args.argc, args.argv, &kvfs_operation, nullptr);
 

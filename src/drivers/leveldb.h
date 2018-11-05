@@ -25,6 +25,8 @@ public:
 
     std::experimental::optional<Content> read(const std::string key);
 
+    std::experimental::optional<size_t> write(const std::string& key, const Content& c);
+
     bool exist(const std::string key);
 
     std::vector<std::string> keys(const std::string partial_key);

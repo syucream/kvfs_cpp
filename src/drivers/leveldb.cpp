@@ -24,6 +24,16 @@ optional<Content> LevelDBDriver::read(const string key) {
     return std::experimental::make_optional(Content(value.data(), value.size()));
 }
 
+optional<size_t> LevelDBDriver::write(const string& key, const Content &c) {
+    const auto value = leveldb::Slice(c.data, c.size);
+    const auto status = (*this->_db)->Put(leveldb::WriteOptions(), key, value);
+    if (status.IsNotFound()) {
+        return std::experimental::nullopt;
+    }
+
+    return std::experimental::make_optional(size_t(c.size));
+}
+
 bool LevelDBDriver::exist(const std::string key) {
     return this->read(key) != std::experimental::nullopt;
 }

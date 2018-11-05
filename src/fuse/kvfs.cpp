@@ -2,6 +2,7 @@
 #include <string>
 #include <cerrno>
 #include <cstring>
+#include <unistd.h>
 
 #include <fuse.h>
 
@@ -32,6 +33,7 @@ static int kvfs_getattr(const char *path,
                         struct stat *stbuf) {
 
     const auto path_str = string(path);
+    const auto st_times = stbuf->st_ctime - time(nullptr);
 
     memset(stbuf, 0, stat_size);
 
@@ -41,6 +43,10 @@ static int kvfs_getattr(const char *path,
         const auto keys = driver->keys(path_str);
         stbuf->st_mode = S_IFDIR | 0755;
         stbuf->st_nlink = keys.size() + 1;
+        stbuf->st_uid = getuid();
+        stbuf->st_gid = getgid();
+        stbuf->st_atime = st_times;
+        stbuf->st_mtime = st_times;
     } else {
         // file
 
@@ -51,7 +57,11 @@ static int kvfs_getattr(const char *path,
 
         stbuf->st_mode = S_IFREG | 0444;
         stbuf->st_nlink = 1;
+        stbuf->st_uid = getuid();
+        stbuf->st_gid = getgid();
         stbuf->st_size = v->size;
+        stbuf->st_atime = st_times;
+        stbuf->st_mtime = st_times;
     }
 
     return 0;

@@ -155,9 +155,8 @@ int main(int argc, char **argv) {
     }
     std::cout << "path: " << options.path << std::endl;
 
-    const auto ret = fuse_main(args.argc, args.argv, &kvfs_operation, nullptr);
-
     driver = new LevelDBDriver(string(options.path));
+    const auto ret = fuse_main(args.argc, args.argv, &kvfs_operation, nullptr);
 
     fuse_opt_free_args(&args);
 

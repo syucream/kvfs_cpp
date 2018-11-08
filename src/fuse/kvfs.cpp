@@ -39,7 +39,6 @@ static int kvfs_getattr(const char *path,
 
     if (path_str.back() == '/') {
         // dir
-
         const auto keys = driver->keys(path_str);
         stbuf->st_mode = S_IFDIR | 0755;
         stbuf->st_nlink = keys.size() + 1;
@@ -49,12 +48,10 @@ static int kvfs_getattr(const char *path,
         stbuf->st_mtime = st_times;
     } else {
         // file
-
         const auto v = driver->read(string(path));
         if (!v) {
             return -ENOENT;
         }
-
         stbuf->st_mode = S_IFREG | 0444;
         stbuf->st_nlink = 1;
         stbuf->st_uid = getuid();
@@ -137,13 +134,21 @@ static int kvfs_write(const char *path,
     return *wsize;
 }
 
+static int kvfs_truncate(const char *path,
+                         off_t size) {
+    // TODO
+
+    return 0;
+}
+
 const static struct fuse_operations kvfs_operation = {
-        .init    = kvfs_init,
-        .getattr = kvfs_getattr,
-        .readdir = kvfs_readdir,
-        .open    = kvfs_open,
-        .read    = kvfs_read,
-        .write   = kvfs_write,
+        .init     = kvfs_init,
+        .getattr  = kvfs_getattr,
+        .readdir  = kvfs_readdir,
+        .open     = kvfs_open,
+        .read     = kvfs_read,
+        .write    = kvfs_write,
+        .truncate = kvfs_truncate,
 };
 
 int main(int argc, char **argv) {

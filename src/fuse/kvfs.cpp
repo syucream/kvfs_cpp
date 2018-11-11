@@ -41,7 +41,7 @@ static int kvfs_getattr(const char *path,
         // dir
         const auto keys = driver->keys(path_str);
         stbuf->st_mode = S_IFDIR | 0755;
-        stbuf->st_nlink = keys.size() + 1;
+        stbuf->st_nlink = 2;
         stbuf->st_uid = getuid();
         stbuf->st_gid = getgid();
         stbuf->st_atime = st_times;
@@ -56,7 +56,6 @@ static int kvfs_getattr(const char *path,
         stbuf->st_nlink = 1;
         stbuf->st_uid = getuid();
         stbuf->st_gid = getgid();
-        stbuf->st_size = v->size;
         stbuf->st_atime = st_times;
         stbuf->st_mtime = st_times;
     }
@@ -134,6 +133,21 @@ static int kvfs_write(const char *path,
     return *wsize;
 }
 
+static int kvfs_create(const char *path,
+                       mode_t mode,
+                       fuse_file_info *fi) {
+    // TODO
+
+    return 0;
+}
+
+static int kvfs_access(const char *path,
+                       int n) {
+    // TODO
+
+    return 0;
+}
+
 static int kvfs_truncate(const char *path,
                          off_t size) {
     // TODO
@@ -148,6 +162,8 @@ const static struct fuse_operations kvfs_operation = {
         .open     = kvfs_open,
         .read     = kvfs_read,
         .write    = kvfs_write,
+        .create   = kvfs_create,
+        .access   = kvfs_access,
         .truncate = kvfs_truncate,
 };
 
@@ -159,6 +175,9 @@ int main(int argc, char **argv) {
         return 1;
     }
     std::cout << "path: " << options.path << std::endl;
+
+    // For debug
+    // fuse_opt_add_arg(&args, "-odefault_permissions");
 
     driver = new LevelDBDriver(string(options.path));
     const auto ret = fuse_main(args.argc, args.argv, &kvfs_operation, nullptr);

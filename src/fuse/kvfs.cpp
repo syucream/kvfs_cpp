@@ -39,9 +39,8 @@ static int kvfs_getattr(const char *path,
 
     if (path_str.back() == '/') {
         // dir
-        const auto keys = driver->keys(path_str);
         stbuf->st_mode = S_IFDIR | 0755;
-        stbuf->st_nlink = 2;
+        stbuf->st_nlink = 2;  // TODO count subdir's
         stbuf->st_uid = getuid();
         stbuf->st_gid = getgid();
         stbuf->st_atime = st_times;
@@ -54,6 +53,7 @@ static int kvfs_getattr(const char *path,
         }
         stbuf->st_mode = S_IFREG | 0444;
         stbuf->st_nlink = 1;
+        stbuf->st_size = v->size;
         stbuf->st_uid = getuid();
         stbuf->st_gid = getgid();
         stbuf->st_atime = st_times;

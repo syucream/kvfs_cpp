@@ -8,8 +8,10 @@ LevelDBDriver::LevelDBDriver(const string path) {
     leveldb::DB *db = nullptr;
 
     this->_options.create_if_missing = true;
-    // TODO check status
+
+    // TODO check status, it might cause db initialization failure.
     leveldb::DB::Open(this->_options, path, &db);
+
     this->_db = std::make_shared<leveldb::DB*>(db);
 }
 

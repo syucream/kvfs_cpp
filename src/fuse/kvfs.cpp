@@ -110,6 +110,13 @@ static int kvfs_open(const char *path,
     return 0;
 }
 
+static int kvfs_opendir(const char *path,
+                     struct fuse_file_info *fi) {
+    // TODO Check permission
+
+    return 0;
+}
+
 static int kvfs_read(const char *path,
                      char *buf,
                      size_t size,
@@ -180,6 +187,7 @@ const static struct fuse_operations kvfs_operation = {
         .getattr  = kvfs_getattr,
         .readdir  = kvfs_readdir,
         .open     = kvfs_open,
+        .opendir  = kvfs_opendir,
         .read     = kvfs_read,
         .write    = kvfs_write,
         .create   = kvfs_create,

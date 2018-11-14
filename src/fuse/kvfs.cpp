@@ -90,8 +90,21 @@ static int kvfs_readdir(const char *path,
 
 static int kvfs_open(const char *path,
                      struct fuse_file_info *fi) {
-    if (!driver->exist(string(path))) {
-        return -ENOENT;
+    if (!driver) {
+        return -EIO;
+    }
+
+    const string spath(path);
+
+    if (!driver->exist(spath)) {
+        if (fi->flags & O_CREAT) {
+            const auto wsize = driver->write(spath, Content(nullptr, 0));
+            if (!wsize) {
+                return -EIO;
+            }
+        } else {
+            return -ENOENT;
+        }
     }
 
     return 0;
@@ -103,7 +116,7 @@ static int kvfs_read(const char *path,
                      off_t offset,
                      struct fuse_file_info *fi) {
     if (!driver || !buf) {
-        return -ENOENT;
+        return -EIO;
     }
 
     const auto v = driver->read(string(path));
@@ -122,11 +135,11 @@ static int kvfs_write(const char *path,
                       off_t offset,
                       struct fuse_file_info *fi) {
     if (!driver || !buf) {
-        return -ENOENT;
+        return -EIO;
     }
 
     const auto wsize = driver->write(string(path), Content(buf, size));
-    if (!size) {
+    if (!wsize) {
         return -ENOENT;
     }
 
@@ -136,7 +149,14 @@ static int kvfs_write(const char *path,
 static int kvfs_create(const char *path,
                        mode_t mode,
                        fuse_file_info *fi) {
-    // TODO
+    if (!driver) {
+        return -EIO;
+    }
+
+    const auto wsize = driver->write(string(path), Content(nullptr, 0));
+    if (!wsize) {
+        return -EIO;
+    }
 
     return 0;
 }

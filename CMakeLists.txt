@@ -7,6 +7,7 @@ set(CMAKE_CXX_FLAGS "-Wall")
 project(kvfs)
 
 set(kvfs_src
+        src/fuse/main.cpp
         src/fuse/kvfs.cpp
         src/drivers/leveldb.cpp
         )

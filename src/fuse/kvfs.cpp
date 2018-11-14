@@ -4,22 +4,22 @@
 #include <cstring>
 #include <unistd.h>
 
-#include <fuse.h>
-
-#include "../drivers/leveldb.h"
+#include "kvfs.h"
 
 using std::string;
+using std::shared_ptr;
 
 constexpr auto stat_size = sizeof(struct stat);
 
-// TODO ensure thread safety, and define an interface
-LevelDBDriver *driver = nullptr;
+// FIXME As a workaround
+// TODO Ensure thread safety, and define an interface
+shared_ptr<LevelDBDriver> driver;
 
-static struct kvfs_option {
+struct kvfs_option {
     const char *path;
 } options;
 
-static const struct fuse_opt kvfs_option_spec[] = {
+const struct fuse_opt kvfs_option_spec[] = {
         {"--path=%s", offsetof(struct kvfs_option, path), 1}
 };
 
@@ -111,7 +111,7 @@ static int kvfs_open(const char *path,
 }
 
 static int kvfs_opendir(const char *path,
-                     struct fuse_file_info *fi) {
+                        struct fuse_file_info *fi) {
     // TODO Check permission
 
     return 0;
@@ -195,22 +195,23 @@ const static struct fuse_operations kvfs_operation = {
         .truncate = kvfs_truncate,
 };
 
-int main(int argc, char **argv) {
-    struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
+FuseRunner::FuseRunner(int argc, char **argv) {
+    this->_args = FUSE_ARGS_INIT(argc, argv);
 
     options.path = "";
-    if (fuse_opt_parse(&args, &options, kvfs_option_spec, nullptr) == -1) {
-        return 1;
+    if (fuse_opt_parse(&this->_args, &options, kvfs_option_spec, nullptr) == -1) {
+        return;
     }
     std::cout << "path: " << options.path << std::endl;
 
-    // For debug
-    // fuse_opt_add_arg(&args, "-odefault_permissions");
+    this->_driver = shared_ptr<LevelDBDriver>(new LevelDBDriver(string(options.path)));
+}
 
-    driver = new LevelDBDriver(string(options.path));
-    const auto ret = fuse_main(args.argc, args.argv, &kvfs_operation, nullptr);
+FuseRunner::~FuseRunner() {
+    fuse_opt_free_args(&this->_args);
+}
 
-    fuse_opt_free_args(&args);
-
-    return ret;
+int FuseRunner::run() {
+    driver = this->_driver;
+    return fuse_main(this->_args.argc, this->_args.argv, &kvfs_operation, nullptr);
 }

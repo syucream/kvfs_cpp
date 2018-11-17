@@ -23,6 +23,8 @@ class LevelDBDriver {
 public:
     LevelDBDriver(const std::string path);
 
+    bool connect();
+
     std::experimental::optional<Content> read(const std::string key);
 
     std::experimental::optional<size_t> write(const std::string& key, const Content& c);

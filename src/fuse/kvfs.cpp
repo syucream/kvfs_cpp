@@ -75,9 +75,15 @@ static int kvfs_readdir(const char *path,
         return -ENOENT;
     }
 
+    /* WIP
+    struct stat dirst;
+    dirst.st_mode = S_IFDIR | 0755;
+    dirst.st_nlink = 2;
+     */
+
     // default dirs
-    filler(buf, ".", nullptr, 0);
-    filler(buf, "..", nullptr, 0);
+    filler(buf, ".", dirst, 0);
+    filler(buf, "..", dirst, 0);
 
     // keys
     const auto keys = driver->keys(path_str);
@@ -212,6 +218,7 @@ FuseRunner::~FuseRunner() {
 }
 
 int FuseRunner::run() {
+    this->_driver->connect();
     driver = this->_driver;
     return fuse_main(this->_args.argc, this->_args.argv, &kvfs_operation, nullptr);
 }

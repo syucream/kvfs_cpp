@@ -4,15 +4,21 @@ using std::string;
 using std::vector;
 using std::experimental::optional;
 
-LevelDBDriver::LevelDBDriver(const string path) {
+LevelDBDriver::LevelDBDriver() {
+    this->_options.create_if_missing = true;
+    this->_db = nullptr;
+}
+
+bool LevelDBDriver::connect(const string path) {
     leveldb::DB *db = nullptr;
 
-    this->_options.create_if_missing = true;
+    const auto status = leveldb::DB::Open(this->_options, path, &db);
+    if (status.ok()) {
+        this->_db = std::make_shared<leveldb::DB*>(db);
+        return true;
+    }
 
-    // TODO check status, it might cause db initialization failure.
-    leveldb::DB::Open(this->_options, path, &db);
-
-    this->_db = std::make_shared<leveldb::DB*>(db);
+    return false;
 }
 
 optional<Content> LevelDBDriver::read(const string key) {

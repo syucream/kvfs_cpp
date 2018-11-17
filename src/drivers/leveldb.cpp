@@ -9,7 +9,7 @@ LevelDBDriver::LevelDBDriver() {
     this->_db = nullptr;
 }
 
-bool LevelDBDriver::connect(const string path) {
+bool LevelDBDriver::connect(const string& path) {
     leveldb::DB *db = nullptr;
 
     const auto status = leveldb::DB::Open(this->_options, path, &db);
@@ -21,7 +21,7 @@ bool LevelDBDriver::connect(const string path) {
     return false;
 }
 
-optional<Content> LevelDBDriver::read(const string key) {
+optional<Content> LevelDBDriver::read(const string&  key) {
     string value;
 
     const auto status = (*this->_db)->Get(leveldb::ReadOptions(), leveldb::Slice(key), &value);
@@ -42,11 +42,11 @@ optional<size_t> LevelDBDriver::write(const string& key, const Content &c) {
     return std::experimental::make_optional(size_t(c.size));
 }
 
-bool LevelDBDriver::exist(const std::string key) {
+bool LevelDBDriver::exist(const std::string& key) {
     return this->read(key) != std::experimental::nullopt;
 }
 
-vector<string> LevelDBDriver::keys(const std::string partial_key) {
+vector<string> LevelDBDriver::keys(const std::string& partial_key) {
     vector<string> keys;
 
     auto it = (*this->_db)->NewIterator(leveldb::ReadOptions());

@@ -2,36 +2,24 @@
 #define KVFS_LEVELDB_H
 
 #include <memory>
-#include <experimental/optional>
-#include <string>
-#include <vector>
+#include "../../include/driver.h"
 
 #include <leveldb/db.h>
 
-struct Content {
-    Content(const char *d, size_t s) {
-        this->data = d;
-        this->size = s;
-    }
 
-    const char *data;
-    size_t size;
-};
-
-// TODO Separate basic decleartions to an interface.
-class LevelDBDriver {
+class LevelDBDriver : Driver {
 public:
-    LevelDBDriver(const std::string path);
+    LevelDBDriver();
 
-    bool connect();
+    bool connect(const std::string& path);
 
-    std::experimental::optional<Content> read(const std::string key);
+    std::experimental::optional<Content> read(const std::string& key);
 
     std::experimental::optional<size_t> write(const std::string& key, const Content& c);
 
-    bool exist(const std::string key);
+    bool exist(const std::string& key);
 
-    std::vector<std::string> keys(const std::string partial_key);
+    std::vector<std::string> keys(const std::string& partial_key);
 
 private:
     std::shared_ptr<leveldb::DB *> _db;

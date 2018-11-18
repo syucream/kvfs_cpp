@@ -21,6 +21,8 @@ struct Content {
  */
 class Driver {
 public:
+    virtual ~Driver(){}
+
     virtual std::experimental::optional<Content> read(const std::string& key) = 0;
 
     virtual std::experimental::optional<size_t> write(const std::string& key, const Content& c) = 0;

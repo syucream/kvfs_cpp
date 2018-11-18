@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cstdlib>
 #include <cerrno>
 #include <cstring>
 #include <unistd.h>
@@ -75,11 +76,9 @@ static int kvfs_readdir(const char *path,
         return -ENOENT;
     }
 
-    /* WIP
-    struct stat dirst;
-    dirst.st_mode = S_IFDIR | 0755;
-    dirst.st_nlink = 2;
-     */
+    struct stat *dirst = nullptr;
+    dirst->st_mode = S_IFDIR | 0755;
+    dirst->st_nlink = 2;
 
     // default dirs
     filler(buf, ".", dirst, 0);
@@ -210,7 +209,12 @@ FuseRunner::FuseRunner(int argc, char **argv) {
     }
     std::cout << "path: " << options.path << std::endl;
 
-    this->_driver = shared_ptr<LevelDBDriver>(new LevelDBDriver(string(options.path)));
+    this->_driver = shared_ptr<LevelDBDriver>(new LevelDBDriver());
+
+    if(!this->_driver->connect(string(options.path))) {
+        std::cerr << "Couldn't connect the database" << std::endl;
+        std::exit(1);
+    }
 }
 
 FuseRunner::~FuseRunner() {
@@ -218,7 +222,6 @@ FuseRunner::~FuseRunner() {
 }
 
 int FuseRunner::run() {
-    this->_driver->connect();
     driver = this->_driver;
     return fuse_main(this->_args.argc, this->_args.argv, &kvfs_operation, nullptr);
 }

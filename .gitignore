@@ -33,6 +33,7 @@
 kvfs
 
 # CMake
+Makefile
 CMakeCache.txt
 CMakeFiles/
 cmake-build-debug/

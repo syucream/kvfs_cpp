@@ -14,9 +14,10 @@ bool LevelDBDriver::connect(const string &path) {
 
     const auto status = leveldb::DB::Open(this->_options, path, &db);
     if (!status.ok()) {
-        this->_db = std::make_shared<leveldb::DB *>(db);
         return false;
     }
+
+    this->_db = std::make_shared<leveldb::DB *>(db);
 
     return true;
 }

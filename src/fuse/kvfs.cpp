@@ -76,13 +76,13 @@ static int kvfs_readdir(const char *path,
         return -ENOENT;
     }
 
-    struct stat *dirst = nullptr;
-    dirst->st_mode = S_IFDIR | 0755;
-    dirst->st_nlink = 2;
+    struct stat dirst;
+    dirst.st_mode = S_IFDIR | 0755;
+    dirst.st_nlink = 2;
 
     // default dirs
-    filler(buf, ".", dirst, 0);
-    filler(buf, "..", dirst, 0);
+    filler(buf, ".", &dirst, 0);
+    filler(buf, "..", &dirst, 0);
 
     // keys
     const auto keys = driver->keys(path_str);
